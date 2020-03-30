@@ -1,0 +1,6 @@
+*.orig
+
+# virtualenv
+game_env/
+
+
