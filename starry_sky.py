@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 from scipy import ndimage
 
 def generate_sky(height, width):
@@ -11,7 +10,7 @@ def generate_sky(height, width):
     x = np.random.choice(height, n_stars)
     y = np.random.choice(width, n_stars)
     sky[x,y] = 255 # set these to "white"
-    # smooth the image using gaussian filter, shift, then median
+    # smooth the image using gaussian filter, shift, then take median
     sky = ndimage.filters.gaussian_filter(sky, 1.5, mode = 'nearest')
     sky = (sky - np.min(sky))/(np.max(sky)-np.min(sky))*255
     sky = ndimage.median_filter(sky, 9, mode = 'nearest') # kernel window of 9
