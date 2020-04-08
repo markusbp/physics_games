@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 from pyglet.window import key
 import tools
 
-G = 40
+G = 10#9.478 # AU^3/yr^-2 M_o^-1
+
+SYSTEM_SIZE = 10 # AU
+
 
 def gravity_acc(r, m):
     d = r - r[:, np.newaxis] # find all distances
@@ -34,7 +37,7 @@ class SolarSystem:
         self.n_bodies = n_bodies
         self.width = width
         self.height = height
-        self.rf = 0 # select reference frame to be object 1, i.e. sun!
+        self.rf = 1 # select reference frame to be object 1, i.e. sun!
 
         r, v, m = self.initialize_system()
         self.r = r # positions
@@ -44,27 +47,27 @@ class SolarSystem:
     def update(self, dt):
         # Euler-Chromer for starters
         acc = gravity_acc(self.r, self.m)
-        self.v = self.v - self.v[self.rf] + dt*acc
+        self.v = self.v + dt*acc
+        self.v = self.v - self.v[self.rf] # shift reference frame
         self.r = self.r + self.v*dt
 
     def convert_to_fuel(self, id):
         # removes body no. id from arrays r,v and m, and adds its mass to player
         self.m[0] = self.m[0] + self.m[id]
-        self.m = np.delete(self.m, id, axis = 0)
         self.r = np.delete(self.r, id, axis = 0)
         self.v = np.delete(self.v, id, axis = 0)
+        self.m = np.delete(self.m, id, axis = 0)
+        if id == self.rf:
+            self.rf = 0
 
     def initialize_system(self):
         # Generate initial positions r0, velocities v0, and masses m0
-        center = np.array([int(self.height/2), int(self.width/2)])
-        r0 = np.random.uniform((0, 0), (self.height/2/5, self.width/2), (self.n_bodies, 2))
-        r0 = np.zeros((self.n_bodies,2))
-        r0[:,0] = np.linspace(0, int(self.width/2), self.n_bodies)
-        v0 = np.random.uniform(-1, 1, (self.n_bodies, 2))*np.array([0,1])
+        r0 = np.random.uniform((-SYSTEM_SIZE, -SYSTEM_SIZE), (SYSTEM_SIZE, SYSTEM_SIZE), (self.n_bodies, 2))
+        v0 = np.random.uniform((-0.1, -0.1), (1.1, 1.1), (self.n_bodies, 2))
         m0 = np.random.uniform(1e-6, 1e-2, self.n_bodies)   # solar masses
         # Assign player to index 0, sun to index 1, and other bodies after
         # Shift system so that star is at center of screen
-        r0 = r0 - r0[self.rf] + center
+        r0 = r0 - r0[self.rf]
         v0 = v0 - v0[self.rf] # heliocentricity, sun at rest
         m0[1] = 1 # solar masses
         return r0, v0, m0
@@ -73,7 +76,7 @@ name = sys.argv[0].split('.')[0]
 
 width = int(sys.argv[1])
 height = int(sys.argv[2])
-
+center = np.array([height, width])
 window = pyglet.window.Window(width, height, caption = name)
 #music = pyglet.resource.media('tocatta_and_fugue_in_D_minor.mp3')
 #music.play()
@@ -104,25 +107,24 @@ bodies.append(CelestialObject(star_icon, sol.r[1], batch = all_bodies))
 for i in range(n_planets):
     bodies.append(CelestialObject(planet_icon, sol.r[i+2], batch = all_bodies))
 
-eating_distance = 40
-
 @window.event
 def on_draw():
     window.clear()
     background.blit(0,0) # blit happens
     all_bodies.draw()
 
-dv = 0.05 # boost level fake
+dv = 5e-2 # boost level: fake
 dtheta = 1 # gyroscopic rotation, in degrees
-
+eating_distance = 1
 def update(dt):
     # this is where we update the window, and the game actually happens
-    sol.update(dt*20) # update solar system
+    sol.update(dt) # update solar system
 
+    shifted = tools.transform(sol.r)
     # update the sprites accordingly
     for j, body in enumerate(bodies):
-        body.update(sol.r[j+1])
-    player.update(sol.r[0])
+        body.update(shifted[j+1])
+    player.update(shifted[0])
 
     # Check if any object is close enough to be converted to fuel
     dist_to_player = np.linalg.norm(sol.r[0] - sol.r[1:], axis = 1)
@@ -141,11 +143,9 @@ def update(dt):
     if controller[key.E]:
         player.rotation += dtheta
         player.rotation = tools.bound_angles(player.rotation)
-        print(player.rotation)
     if controller[key.Q]:
         player.rotation -= dtheta
         player.rotation = tools.bound_angles(player.rotation)
-        print(player.rotation)
 
 pyglet.clock.schedule_interval(update, 1 / 60) # schedule game update every 1/60th second
 

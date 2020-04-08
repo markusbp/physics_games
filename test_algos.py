@@ -24,3 +24,11 @@ def test_unit_vector():
         unit_vector = tools.unit_vector(theta)
         print('Calculated vector:', unit_vector, '\nActual vector:', vector)
         assert unit_vector == pytest.approx(vector)
+
+def test_transform():
+    r0 = np.array([-30, 0])
+    height = 1080
+    result = [0, int(height/2)]
+    shifted = tools.transform(r0)
+    print('Result', result, 'Shifted', shifted)
+    assert result == pytest.approx(shifted)
