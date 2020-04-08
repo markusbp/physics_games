@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage
@@ -17,8 +18,18 @@ def generate_sky(height, width):
     sky = ndimage.median_filter(sky, 9, mode='nearest')  # kernel window of 9
     return sky
 
+def generate_bg(height, width):
+    # generate white background
+    sky = np.ones((height, width), dtype = np.uint8)*255
+    fig = plt.figure(frameon=False)
+    #fig.set_size_inches(h,w)
+    ax = plt.Axes(fig, [0., 0., 1., 1.])
+    ax.set_axis_off()
+    fig.add_axes(ax)
+    ax.imshow(sky, aspect='auto', cmap = 'gray', vmin = 0, vmax = 255)
+    fig.savefig('background.png', dpi = 300)
+    return sky
 
 if __name__ == '__main__':
-    sky = generate_sky(1080, 1920)
-    plt.imshow(sky, cmap='gray')
-    plt.show()
+    h, w = int(sys.argv[1]), int(sys.argv[2])
+    sky = generate_bg(h, w)
