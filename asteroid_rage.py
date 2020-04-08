@@ -109,16 +109,16 @@ eating_distance = 40
 @window.event
 def on_draw():
     window.clear()
-    background.blit(0,0)
+    background.blit(0,0) # blit happens
     all_bodies.draw()
 
-# where the actual game happens!
+dv = 0.05 # boost level fake
+dtheta = 1 # gyroscopic rotation, in degrees
 
-dv = 0.05
-dtheta = 1
 def update(dt):
-
+    # this is where we update the window, and the game actually happens
     sol.update(dt*20) # update solar system
+
     # update the sprites accordingly
     for j, body in enumerate(bodies):
         body.update(sol.r[j+1])
@@ -136,7 +136,7 @@ def update(dt):
 
     if controller[key.W]:
         orientation = np.radians(player.rotation)
-        boost = np.array([np.sin(orientation), np.cos(orientation)])*dv
+        boost = tools.unit_vector(orientation)*dv
         sol.v[0] = sol.v[0] + boost
     if controller[key.E]:
         player.rotation += dtheta

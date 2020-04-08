@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 import tools
@@ -15,3 +16,11 @@ def test_angle_bounds():
         theta = tools.bound_angles(theta)
         print('Theta', theta, 'Label', actual)
         assert theta == pytest.approx(actual)
+
+def test_unit_vector():
+    angles = [0, np.pi/2]
+    expectors = [[0, 1], [1, 0]]
+    for theta, vector in zip(angles, expectors):
+        unit_vector = tools.unit_vector(theta)
+        print('Calculated vector:', unit_vector, '\nActual vector:', vector)
+        assert unit_vector == pytest.approx(vector)

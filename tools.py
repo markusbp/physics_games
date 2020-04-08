@@ -14,3 +14,6 @@ def bound_angles(theta):
     else:
         mod = theta
     return mod
+
+def unit_vector(angle):
+    return np.array([np.sin(angle), np.cos(angle)])
