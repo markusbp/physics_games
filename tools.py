@@ -17,9 +17,3 @@ def bound_angles(theta):
 
 def unit_vector(angle):
     return np.array([np.sin(angle), np.cos(angle)])
-
-def transform(coord):
-    # shift coord from [-bound, bound] to [height, width]*scale
-    center = np.array([1920, 1080])/2
-    scale = 1920/60
-    return coord*scale + center

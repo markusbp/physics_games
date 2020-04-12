@@ -26,9 +26,11 @@ def test_unit_vector():
         assert unit_vector == pytest.approx(vector)
 
 def test_transform():
-    r0 = np.array([-30, 0])
+    scale = 10
+    r0 = np.array([-scale, 0])
+    width  = 1920
     height = 1080
     result = [0, int(height/2)]
-    shifted = tools.transform(r0)
+    shifted = tools.transform(r0, width, height, scale)
     print('Result', result, 'Shifted', shifted)
     assert result == pytest.approx(shifted)
