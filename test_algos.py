@@ -3,11 +3,7 @@ import pytest
 
 import tools
 
-def test_n_body():
-    n = 10
-
-def test_integrator():
-    pass
+# Test module
 
 def test_angle_bounds():
     angles = [360, 370, -500]
@@ -26,11 +22,15 @@ def test_unit_vector():
         assert unit_vector == pytest.approx(vector)
 
 def test_transform():
+    # test that physical coordinates are transformed to screen coordinates correctly
     scale = 10
-    r0 = np.array([-scale, 0])
+    r0 = np.array([0, -scale])
     width  = 1920
     height = 1080
-    result = [0, int(height/2)]
-    shifted = tools.transform(r0, width, height, scale)
+    result = [int(width/2), 0]
+    center = np.array([int(width/2), int(height/2)])
+    shifted = tools.transform(r0, scale, center)
     print('Result', result, 'Shifted', shifted)
     assert result == pytest.approx(shifted)
+
+# Next tests to be implemented: Test gravity_acc and n_body simulator. Must think about how

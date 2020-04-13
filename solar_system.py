@@ -5,9 +5,10 @@ G = 39.478 # AU^3/yr^-2 M_o^-1
 
 class SolarSystem:
     def __init__(self, n_bodies, ref_frame, scale):
+        # Solar system with n_bodies in it
         self.n_bodies = n_bodies
         self.rf = ref_frame # select reference frame to be object 1, i.e. sun!
-        self.scale = scale
+        self.scale = scale # bounds of solar system, [AU]
         r, v, m = self.initialize_system()
         self.r = r # positions
         self.v = v # velocities
@@ -45,10 +46,10 @@ class SolarSystem:
         return r0, v0, m0
 
 def gravity_acc(r, m):
-    d = r - r[:, np.newaxis] # find all distances
-    f = np.zeros((len(r), len(r)-1, 2))
-    indices = np.arange(len(r))
     # calculate n body problem in inefficient manner :(
+    d = r - r[:, np.newaxis] # find all distances
+    f = np.zeros((len(r), len(r)-1, 2)) # forces
+    indices = np.arange(len(r))
     for i in range(len(r)):
         mask = indices != i # do not include the body itself
         f[i] = G*m[mask, None]/np.linalg.norm(d[i, mask], axis = -1, keepdims = True)**3*d[i,mask]

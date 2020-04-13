@@ -1,6 +1,7 @@
 import pyglet
 import numpy as np
 
+# module for creating some simple tools for use in main project
 def load_sprite_image(filename):
     # load sprite image, and anchor to its center!
     img = pyglet.image.load(filename)
@@ -9,6 +10,7 @@ def load_sprite_image(filename):
     return img
 
 def bound_angles(theta):
+    # make sure player rotation is in [-360, 360] degrees
     if np.abs(theta) > 360:
         mod = theta%360
     else:
@@ -16,4 +18,9 @@ def bound_angles(theta):
     return mod
 
 def unit_vector(angle):
+    # return a unit vector with oriented along angle
     return np.array([np.sin(angle), np.cos(angle)])
+
+def transform(coord, scale, center):
+    # shift coord from [-system size, system size] to [height, width]*zoom
+    return coord*np.amin(center)/(scale) + center
