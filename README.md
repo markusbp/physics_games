@@ -2,7 +2,7 @@
 Repo for testing small, physics based games, with education in mind. Written in python 3, using the pyglet library.
 First attempt is asteroid_rage (working title)
 
-#Usage from terminal:
+# Usage
 python3 asteroid_rage --width --height
 
 
@@ -12,6 +12,6 @@ Beware that there is audio :-)
 
 
 
-# Controls:
+# Controls
 w - boost, a - rotate counterclockwise,  d - rotate clockwise 
 
