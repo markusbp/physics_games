@@ -5,8 +5,13 @@ First attempt is asteroid_rage (working title)
 #Usage from terminal:
 python3 asteroid_rage --width --height
 
-# Controls:
-w - boost, a - rotate counterclockwise,  d - rotate clockwise 
+
 
 width and height is the desired screen size. Note: width is currently assumed to be greater than height!
 Beware that there is audio :-)
+
+
+
+# Controls:
+w - boost, a - rotate counterclockwise,  d - rotate clockwise 
+
