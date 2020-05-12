@@ -19,6 +19,13 @@ def generate_sky(height, width):
 
 
 if __name__ == '__main__':
-    sky = generate_sky(1080, 1920)
-    plt.imshow(sky, cmap='gray')
-    plt.show()
+    h, w = 1080, 1920
+    sky = generate_sky(w, h)
+
+    fig = plt.figure(frameon=False, figsize = (9, 5))
+    ax = plt.Axes(fig, [0., 0., 1., 1.])
+    ax.set_axis_off()
+    fig.add_axes(ax)
+
+    ax.imshow(sky, cmap = 'gray', aspect = 'auto')
+    fig.savefig('sky.png', dpi = 600)

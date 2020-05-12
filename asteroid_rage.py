@@ -13,8 +13,9 @@ def initialize_solar_system(n_bodies):
     m0[1] = 1
     return r0, v0, m0
 
-def gravity(r):
-    pass
+def gravity(r, m):
+    d = r - r[:,np.newaxis,:]
+    print(d)
 
 class CelestialObject(pyglet.sprite.Sprite):
     def __init__(self, image, r, **kwargs):
@@ -68,7 +69,7 @@ def on_draw():
 # where the actual game happens!
 def update(dt):
     # Euler-Chromer for starters
-    acc = 0
+    acc = gravity(system.r, system.m)
     system.v = system.v + dt*acc
     system.r = system.r + system.v*dt
 
