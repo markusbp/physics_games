@@ -1,4 +1,5 @@
 *.orig
+*.pyc
 
 # virtualenv
 game_env/

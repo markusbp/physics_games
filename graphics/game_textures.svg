@@ -161,19 +161,6 @@
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
-       id="filter2944"
-       x="-0.069911566"
-       width="1.1398231"
-       y="-0.34815176"
-       height="1.6963035">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.13018501"
-         id="feGaussianBlur2946" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
        id="filter2956"
        x="-0.26138977"
        width="1.5227795"
@@ -3174,19 +3161,6 @@
        y1="126.57999"
        x2="154.21429"
        y2="126.67448" />
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter3028-9-43-6"
-       x="-0.27426088"
-       width="1.5485218"
-       y="-0.56094116"
-       height="2.1218822">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.43727384"
-         id="feGaussianBlur3030-7-9-5" />
-    </filter>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient8331"
@@ -3819,10 +3793,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="448.32565"
-     inkscape:cy="607.86884"
+     inkscape:cx="408.55619"
+     inkscape:cy="599.31695"
      inkscape:document-units="mm"
-     inkscape:current-layer="g5194-6-5"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1025"
@@ -3837,7 +3811,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -3858,7 +3832,7 @@
        d="m 120.53769,118.00052 a 0.66817379,1.081128 0 0 1 8.1e-4,0.004 l -0.63471,0.33787 z" />
     <g
        id="g8079"
-       transform="translate(20.78869,6.9925595)"
+       transform="translate(22.525942,2.3153428)"
        inkscape:export-filename="/home/m/p1.png"
        inkscape:export-xdpi="1023.8"
        inkscape:export-ydpi="1023.8">
@@ -5123,12 +5097,13 @@
     <g
        id="g5194-6"
        transform="translate(30.557519,-20.435099)"
-       style="opacity:0.74599998;fill:#9d00ff;fill-opacity:0.33783785;filter:url(#filter6184)"
+       style="opacity:1;fill:#9d00ff;fill-opacity:0.33783785;filter:url(#filter6184)"
        inkscape:export-filename="/home/m/p3.png"
        inkscape:export-xdpi="1023"
        inkscape:export-ydpi="1023">
       <g
-         id="g6287">
+         id="g6287"
+         style="">
         <path
            transform="rotate(58.034123,-50.297469,-9.9015861)"
            d="m 159.89319,-73.973646 a 0.66817379,1.081128 0 0 1 8.1e-4,0.004 l -0.63471,0.337871 z"
@@ -5140,10 +5115,10 @@
            sodipodi:cx="159.25929"
            sodipodi:type="arc"
            id="path2638-2"
-           style="opacity:1;fill:#3400ff;fill-opacity:0.33783785;stroke:none;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:0.26458331, 0.79374995;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
+           style="opacity:1;fill:#3400ff;fill-opacity:0.33783785;stroke:none;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:0.26458331, 0.79374995000000004;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
         <circle
            transform="rotate(58.034124)"
-           style="opacity:1;fill:#9d00ff;fill-opacity:0.33783785;stroke:none;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:0.26458331, 0.79374995;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           style="opacity:1;fill:#9d00ff;fill-opacity:0.33783785;stroke:none;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:0.26458331, 0.79374995000000004;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
            id="path2502-8-9"
            cx="166.10565"
            cy="-17.390409"
@@ -6692,7 +6667,7 @@
        cx="142.9892"
        cy="159.75711"
        r="12.142485"
-       style="opacity:1;fill:url(#linearGradient11256);fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:0.26458331, 0.79374995;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:url(#linearGradient11256);fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:0.26458331, 0.79374995000000004;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="path2502-3-9"
        inkscape:export-filename="/home/m/p2.png"
        inkscape:export-xdpi="1023"

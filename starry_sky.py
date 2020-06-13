@@ -1,7 +1,7 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage
-
 
 def generate_sky(height, width):
     # generate a nice star-studded background for a solar system
@@ -11,21 +11,24 @@ def generate_sky(height, width):
     x = np.random.choice(height, n_stars)
     y = np.random.choice(width, n_stars)
     sky[x, y] = 255  # set these to "white"
-    # smooth the image using gaussian filter, shift, then take median
+    # smooth the image using gaussian filter, take median, then shift
     sky = ndimage.filters.gaussian_filter(sky, 1.2, mode='nearest')
-    sky = (sky - np.min(sky))/(np.max(sky)-np.min(sky))*255
     sky = ndimage.median_filter(sky, 9, mode='nearest')  # kernel window of 9
+    sky = (sky - np.min(sky))/(np.max(sky)-np.min(sky))*255
     return sky
 
+def generate_bg(height, width):
+    # generate white background
+    sky = np.ones((height, width), dtype = np.uint8)*255
+    return sky
 
 if __name__ == '__main__':
-    h, w = 1080, 1920
-    sky = generate_sky(w, h)
-
-    fig = plt.figure(frameon=False, figsize = (9, 5))
+    w, h = int(sys.argv[1]), int(sys.argv[2])
+    sky = generate_sky(h, w)
+    # Save generated figure without axes
+    fig = plt.figure(frameon=False)
     ax = plt.Axes(fig, [0., 0., 1., 1.])
     ax.set_axis_off()
     fig.add_axes(ax)
-
-    ax.imshow(sky, cmap = 'gray', aspect = 'auto')
-    fig.savefig('sky.png', dpi = 600)
+    ax.imshow(sky, aspect='auto', cmap = 'gray', vmin = 0, vmax = 255)
+    fig.savefig('./graphics/background.png', dpi = 300)
