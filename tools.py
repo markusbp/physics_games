@@ -21,8 +21,8 @@ def unit_vector(angle):
     # return a unit vector with oriented along angle
     return np.array([np.sin(angle), np.cos(angle)])
 
-def radial_vector(r1, r2):
-    pass
+def tangent_vector(r):
+    return np.flip(r, axis = -1)*np.array([-1, 1])
 
 def transform(coord, scale, center):
     # shift coord from [-system size, system size] to [height, width]*zoom

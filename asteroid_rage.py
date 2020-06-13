@@ -93,6 +93,11 @@ for i in range(n_planets):
     planet_icon = tools.load_sprite_image(f'./graphics/p{i+1}.png')
     bodies.append(CelestialObject(planet_icon, sol.r[i+2], batch = all_bodies))
 
+for i in range(n_bodies):
+    bodies[i].scale *= 0.1
+
+player.scale = 1
+
 @window.event
 def on_draw():
     # draw all objects in game window
@@ -106,7 +111,7 @@ eating_distance = 1 # maximum distance at which planet is consumed
 
 def update(dt):
     # this is where we update the window, and the game actually happens
-    sol.update(dt) # update solar system motions
+    sol.update(dt*5) # update solar system motions
     # then shift from solar system coordinates to screen coordinates
     shifted = to_screen.transform(sol.r)
 

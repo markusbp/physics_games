@@ -1,5 +1,6 @@
 import numpy as np
 
+import tools
 # Init constants
 G = 39.478 # AU^3/yr^-2 M_o^-1
 
@@ -34,20 +35,21 @@ class SolarSystem:
         # Generate initial positions r0, velocities v0, and masses m0
         r0 = np.random.uniform((-self.scale, -self.scale),\
                                (self.scale, self.scale), (self.n_bodies, 2))
-        v0 = np.random.uniform((-0.1, -0.1), (1.1, 1.1), (self.n_bodies, 2))
         m0 = np.random.uniform(1e-6, 1e-2, self.n_bodies)   # solar masses
         # Assign player to index 0, sun to index 1, and other bodies after
         # Shift system so that star is at center of screen
-        r0[1] = 0 # initialize as if heliocentric
+        r0[1] = 0 # initialize sun at coordinate origin
+        m0[1] = 1 # mass in solar masses
+        v0 = vis_viva(r0)
         v0[1] = 0
-        m0[1] = 1 # solar masses
         return r0, v0, m0
 
 def vis_viva(r0):
     # find (initial) velocity of elliptical orbit using vis viva equation
-    vel_vec = tools.radial_vec(r0)
-    a = np.linalg.norm(r0, axis = -1)
-    return np.sqrt(G*1/a)*vel_vec
+    a = np.linalg.norm(r0, axis = -1, keepdims = True)
+    rad_vec = r0/a
+    tan_vec = tools.tangent_vector(rad_vec)
+    return np.sqrt(G*1/a)*tan_vec
 
 def gravity_acc(r, m):
     # calculate n body problem in inefficient manner :(
