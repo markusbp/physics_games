@@ -111,10 +111,9 @@ eating_distance = 1 # maximum distance at which planet is consumed
 
 def update(dt):
     # this is where we update the window, and the game actually happens
-    sol.update(dt*5) # update solar system motions
+    sol.update(dt) # update solar system motions
     # then shift from solar system coordinates to screen coordinates
     shifted = to_screen.transform(sol.r)
-
     # update the sprites (icons) accordingly
     for j, body in enumerate(bodies):
         body.update(shifted[j])
@@ -137,11 +136,11 @@ def update(dt):
         boost = tools.unit_vector(orientation)*dv
         sol.v[0] = sol.v[0] + boost
     if controller[key.D]:
-        player.rotation += dtheta # rotate clockwise
-        player.rotation = tools.bound_angles(player.rotation)
+        # rotate clockwise
+        player.rotation = tools.bound_angles(player.rotation + dtheta)
     if controller[key.A]:
-        player.rotation -= dtheta # rotate counterclockwise
-        player.rotation = tools.bound_angles(player.rotation)
+        # rotate counterclockwise
+        player.rotation = tools.bound_angles(player.rotation - dtheta)
 
     # zoom functionality
     if controller[key.O]:

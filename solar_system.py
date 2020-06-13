@@ -38,10 +38,10 @@ class SolarSystem:
         m0 = np.random.uniform(1e-6, 1e-2, self.n_bodies)   # solar masses
         # Assign player to index 0, sun to index 1, and other bodies after
         # Shift system so that star is at center of screen
-        r0[1] = 0 # initialize sun at coordinate origin
+        r0[1] = 0 # initialize sun at centre
         m0[1] = 1 # mass in solar masses
         v0 = vis_viva(r0)
-        v0[1] = 0
+        v0[1] = 0 # sun at rest in centre of system
         return r0, v0, m0
 
 def vis_viva(r0):
