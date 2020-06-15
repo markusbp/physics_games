@@ -21,6 +21,13 @@ def unit_vector(angle):
     # return a unit vector with oriented along angle
     return np.array([np.sin(angle), np.cos(angle)])
 
+def tangent_vector(r):
+    return np.flip(r, axis = -1)*np.array([-1, 1])
+
 def transform(coord, scale, center):
     # shift coord from [-system size, system size] to [height, width]*zoom
     return coord*np.amin(center)/(scale) + center
+
+def scale_bodies(bodies, scale):
+    for body in bodies:
+        body.scale *= scale

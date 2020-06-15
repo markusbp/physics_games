@@ -31,4 +31,4 @@ if __name__ == '__main__':
     ax.set_axis_off()
     fig.add_axes(ax)
     ax.imshow(sky, aspect='auto', cmap = 'gray', vmin = 0, vmax = 255)
-    fig.savefig('background.png', dpi = 300)
+    fig.savefig('./graphics/background.png', dpi = 300)
