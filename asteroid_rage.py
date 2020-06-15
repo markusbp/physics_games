@@ -81,7 +81,7 @@ n_planets = 8 # eight planets
 n_bodies = 2 + n_planets # 1 sun, 1 player
 
 # create a solar system which does calculations!
-sol = SolarSystem(n_bodies, 1, SYSTEM_SIZE)
+sol = SolarSystem(n_bodies, 0, SYSTEM_SIZE)
 to_screen = ScreenTransform(width, height, SYSTEM_SIZE, 1)
 
 # create player object
@@ -142,8 +142,14 @@ def update(dt):
     # zoom functionality
     if controller[key.O]:
         to_screen.zoom /= 1.1
+        player.scale /= 1.1
+        for body in bodies:
+            body.scale /= 1.1
     if controller[key.P]:
         to_screen.zoom *= 1.1
+        player.scale *= 1.1
+        for body in bodies:
+            body.scale *= 1.1
 
 pyglet.clock.schedule_interval(update, 1/60.0) # update game every 1/60 seconds
 

@@ -7,7 +7,7 @@ class SolarSystem:
     def __init__(self, n_bodies, ref_frame, scale):
         # Solar system with n_bodies in it
         self.n_bodies = n_bodies
-        self.rf = ref_frame # select reference frame to be object 1, i.e. sun!
+        self.rf = ref_frame # select reference frame to be object ref_frame
         self.scale = scale # bounds of solar system, [AU]
         r, v, m = self.initialize_system()
         self.r = r # positions
@@ -19,7 +19,7 @@ class SolarSystem:
         acc = gravity_acc(self.r, self.m)
         self.v = self.v + dt*acc
         self.v = self.v - self.v[self.rf] # shift reference frame
-        self.r = self.r + self.v*dt
+        self.r = self.r + self.v*dt  - self.r[self.rf] #################################
 
     def convert_to_fuel(self, id):
         # removes body no. id from arrays r,v and m, and adds its mass to player
@@ -28,8 +28,6 @@ class SolarSystem:
         self.r = np.delete(self.r, id, axis = 0)
         self.v = np.delete(self.v, id, axis = 0)
         self.m = np.delete(self.m, id, axis = 0)
-        if id == self.rf:
-            self.rf = 0
         return gained_mass
 
     def initialize_system(self):
