@@ -24,7 +24,7 @@ class ScreenTransform:
         self.center = np.array([int(width/2), int(height/2)])
         self.scale = self.height/(2*self.system_size)*self._zoom
 
-    def transform(self, coord):
+    def __call__(self, coord):
         # shift coord from [-system size, system size] to [height, width]*zoom
         return coord*self.scale + self.center
 
@@ -72,7 +72,7 @@ all_bodies = pyglet.graphics.Batch() # draw everything at once in a Batch
 n_planets = 7 # number of planets
 n_bodies = 2 + n_planets # 1 sun, 1 player
 
-to_screen = ScreenTransform(width, height, SYSTEM_SIZE, 1)
+transform = ScreenTransform(width, height, SYSTEM_SIZE, 1)
 # create a solar system which does calculations
 sol = SolarSystem(n_bodies, SYSTEM_SIZE)
 
@@ -94,7 +94,7 @@ for i in range(n_planets):
 
 ################################################################################
 for i in range(n_bodies):
-    bodies[i].scale = (sol.m[i]/(sol.rho[i]*4/3*np.pi))**(1/3)*2*10
+    bodies[i].scale = sol.radius[i]*2*transform.scale
 player.scale = 1
 
 @window.event
@@ -105,14 +105,14 @@ def on_draw():
     all_bodies.draw()
 
 dv = 5e-2 # boost level: to be replaced with momentum exchange
-dtheta = 1 # gyroscopic rotation, in degrees
+dtheta = 2 # gyroscopic rotation, in degrees
 eating_distance = 0.1 # maximum distance at which planet is consumed
 
 def update(dt):
     # this is where we update the window, and the game actually happens
     sol.update(dt) # update solar system motions
     # then shift from solar system coordinates to screen coordinates
-    shifted = to_screen.transform(sol.r)
+    shifted = transform(sol.r)
     # update the sprites (icons) accordingly
     for j, body in enumerate(bodies):
         body.update(shifted[j])
@@ -143,11 +143,11 @@ def update(dt):
 
     # zoom functionality
     if controller[key.O]:
-        to_screen.zoom /= 1.1
-        tools.scale_bodies(bodies, 0.9)
+        transform.zoom /= 1.05
+        tools.scale_bodies(bodies, 0.95)
     if controller[key.P]:
-        to_screen.zoom *= 1.1
-        tools.scale_bodies(bodies, 1.1)
+        transform.zoom *= 1.05
+        tools.scale_bodies(bodies, 1.05)
 
 pyglet.clock.schedule_interval(update, 1/60.0) # update game every 1/60 seconds
 

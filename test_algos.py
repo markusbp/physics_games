@@ -21,6 +21,13 @@ def test_unit_vector():
         print('Calculated vector:', unit_vector, '\nActual vector:', vector)
         assert unit_vector == pytest.approx(vector)
 
+def test_tangent_vector():
+    angles = [np.pi/4, np.pi/2]
+    for theta in angles:
+        direction_vector = np.array([np.cos(theta), np.sin(theta)])
+        tangent_vector = tools.tangent_vector(direction_vector)
+        assert np.dot(direction_vector, tangent_vector) == pytest.approx(0)
+
 def test_transform():
     # test that physical coordinates are transformed to screen coordinates correctly
     scale = 10

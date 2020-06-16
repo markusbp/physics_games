@@ -15,6 +15,7 @@ class SolarSystem:
         self.v = v # velocities
         self.m = m # masses
         self.rho = rho
+        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3)
 
     def update(self, dt):
         # Euler-Chromer for starters
@@ -38,9 +39,9 @@ class SolarSystem:
                                (self.scale, self.scale), (self.n_bodies, 2))
         m0 = np.random.uniform(1e-6, 1e-2, self.n_bodies)   # solar masses
         rho = np.random.uniform(1e6, 1e7, self.n_bodies) # solar masses/au^3
-        rho[1] = 1e6
+        rho[1] = 2.3e6  # mean solar density, solar masses/au^3
+
         # Assign player to index 0, sun to index 1, and other bodies after
-        # Shift system so that star is at center of screen
         r0[1] = 0 # initialize sun at centre
         m0[1] = 1 # mass in solar masses
         v0 = vis_viva(r0) # elliptical orbits, semimajor axis given by r0
@@ -49,7 +50,7 @@ class SolarSystem:
 
 def vis_viva(r0):
     # find (initial) velocity of elliptical orbit using vis viva equation
-    a = np.linalg.norm(r0, axis = -1, keepdims = True)
+    a = np.linalg.norm(r0, axis = -1, keepdims = True) # semimajor  axis
     rad_vec = r0/a
     tan_vec = tools.tangent_vector(rad_vec)
     return np.sqrt(G*1/a)*tan_vec

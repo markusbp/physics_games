@@ -3,15 +3,10 @@ Repo for testing small, physics based games, with education in mind. Written in 
 First attempt is asteroid_rage (working title)
 
 # Usage
-python3 asteroid_rage --width --height
+python3 asteroid_rage
 
-
-
-width and height is the desired screen size. Note: width is currently assumed to be greater than height!
-Beware that there is audio :-)
-
+This runs the game at 1920x1080 resolution.
 
 
 # Controls
-w - boost, a - rotate counterclockwise,  d - rotate clockwise 
-
+w - boost, a - rotate counterclockwise,  d - rotate clockwise, o/p - zoom out/in
