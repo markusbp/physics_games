@@ -6,38 +6,7 @@ from pyglet.window import key # controller
 
 import tools
 from solar_system import SolarSystem
-
-class ScreenTransform:
-    def __init__(self, width, height, system_size, zoom = 1):
-        '''
-        Handles transform from physical coordinates to screen coordinates
-        width: screen width
-        height: screen height
-        system_size: scale of solar system in AU
-        zoom: zoom factor; allows us to change scale
-        '''
-        self.width = width
-        self.height = height
-        self.system_size = system_size # solar system scale
-        self._zoom = zoom # optional zoom level
-        # center of screen
-        self.center = np.array([int(width/2), int(height/2)])
-        self.scale = self.height/(2*self.system_size)*self._zoom
-
-    def __call__(self, coord):
-        # shift coord from [-system size, system size] to [height, width]*zoom
-        return coord*self.scale + self.center
-
-    @property
-    def zoom(self):
-        # set zoom: @property allows us to use a setter
-        return self._zoom
-
-    @zoom.setter
-    def zoom(self, zoom):
-        # setter allows us to change scale factor correctly when zoom changes
-        self._zoom = zoom
-        self.scale = self.height/(2*self.system_size)*self._zoom
+from screen_transform import ScreenTransform
 
 class CelestialObject(pyglet.sprite.Sprite):
     def __init__(self, image, r0, **kwargs):
@@ -67,11 +36,12 @@ music.play()
 controller = key.KeyStateHandler() # create a controller
 window.push_handlers(controller) # connect controller to game window
 
-all_bodies = pyglet.graphics.Batch() # draw everything at once in a Batch
+main_batch = pyglet.graphics.Batch() # draw everything at once in a Batch
 
 n_planets = 7 # number of planets
 n_bodies = 2 + n_planets # 1 sun, 1 player
 
+# transform object to convert from solar system to screen coordinates
 transform = ScreenTransform(width, height, SYSTEM_SIZE, 1)
 # create a solar system which does calculations
 sol = SolarSystem(n_bodies, SYSTEM_SIZE)
@@ -83,32 +53,40 @@ star_icon = tools.load_sprite_image('./graphics/star.png')
 
 bodies = [] # group all bodies in a list
 # create player object
-player = CelestialObject(player_icon, sol.r[0], batch = all_bodies)
-star = CelestialObject(star_icon, sol.r[1], batch = all_bodies)
+player = CelestialObject(player_icon, sol.r[0], batch = main_batch)
+star = CelestialObject(star_icon, sol.r[1], batch = main_batch)
 # add star first, then planets
 bodies.append(player)
 bodies.append(star)
 for i in range(n_planets):
     planet_icon = tools.load_sprite_image(f'./graphics/p{i+1}.png')
-    bodies.append(CelestialObject(planet_icon, sol.r[i+2], batch = all_bodies))
+    bodies.append(CelestialObject(planet_icon, sol.r[i+2], batch = main_batch))
 
-################################################################################
 for i in range(n_bodies):
     bodies[i].scale = sol.radius[i]*2*transform.scale
-player.scale = 1
+player.scale = 0.1
+
+time_label = pyglet.text.Label('Time: 0', x = width*0.9, y = height*0.95, batch=main_batch)
+fuel_label = pyglet.text.Label('Fuel: %.3E' %(sol.m[0]), x = width*0.904, y = height*0.93, batch=main_batch)
+
+
+dv = 5e-2 # boost level: to be replaced with momentum exchange
+dtheta = 2 # gyroscopic rotation, in degrees
+eating_distance = 0.1 # maximum distance at which planet is consumed
+
+time = [0]
 
 @window.event
 def on_draw():
     # draw all objects in game window
     window.clear() # refresh
     background.blit(0,0) # blit happens
-    all_bodies.draw()
+    main_batch.draw()
 
-dv = 5e-2 # boost level: to be replaced with momentum exchange
-dtheta = 2 # gyroscopic rotation, in degrees
-eating_distance = 0.1 # maximum distance at which planet is consumed
 
 def update(dt):
+    time[0] += dt
+    time_label.text = 'Time: ' + str(time)[1:8]
     # this is where we update the window, and the game actually happens
     sol.update(dt) # update solar system motions
     # then shift from solar system coordinates to screen coordinates
@@ -127,7 +105,7 @@ def update(dt):
         bodies[object_id].delete() # remove sprite
         del(bodies[object_id]) # and list entry
         sol.convert_to_fuel(object_id) # and remove object from calculations
-
+        fuel_label.text = 'Fuel: %.3E' %(sol.m[0])
     # Here comes the actual controls!
     if controller[key.W]:
         # perform boost in direction of spacecraft
@@ -142,14 +120,14 @@ def update(dt):
         player.rotation = tools.bound_angles(player.rotation - dtheta)
 
     # zoom functionality
-    if controller[key.O]:
+    if controller[key.DOWN]:
         transform.zoom /= 1.05
         tools.scale_bodies(bodies, 0.95)
-    if controller[key.P]:
+    if controller[key.UP]:
         transform.zoom *= 1.05
         tools.scale_bodies(bodies, 1.05)
 
-pyglet.clock.schedule_interval(update, 1/60.0) # update game every 1/60 seconds
+pyglet.clock.schedule_interval(update, 1/120.0) # update game every 1/60 seconds
 
 if __name__ == '__main__':
     pyglet.app.run()
