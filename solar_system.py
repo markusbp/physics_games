@@ -1,6 +1,5 @@
 import numpy as np
-
-import tools
+import utils
 # Init constants
 G = 39.478 # AU^3/yr^-2 M_o^-1
 
@@ -14,8 +13,8 @@ class SolarSystem:
         self.r = r # positions
         self.v = v # velocities
         self.m = m # masses
-        self.rho = rho
-        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3)
+        self.rho = rho # densities
+        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3) # radii
 
     def update(self, dt):
         # Euler-Chromer for starters
@@ -23,15 +22,6 @@ class SolarSystem:
         self.v = self.v + dt*acc
         self.v = self.v - self.v[self.rf] # shift reference frame
         self.r = self.r + self.v*dt - self.r[self.rf]
-
-    def convert_to_fuel(self, id):
-        # removes body no. id from arrays r,v and m, and adds its mass to player
-        gained_mass = self.m[id]
-        self.m[0] = self.m[0] + gained_mass
-        self.r = np.delete(self.r, id, axis = 0)
-        self.v = np.delete(self.v, id, axis = 0)
-        self.m = np.delete(self.m, id, axis = 0)
-        return gained_mass
 
     def initialize_system(self):
         # Generate initial positions r0, velocities v0, and masses m0
@@ -48,11 +38,22 @@ class SolarSystem:
         v0[1] = 0 # sun at rest in centre of system
         return r0, v0, m0, rho
 
+    def convert_to_fuel(self, id):
+        # removes body no. id from arrays r,v and m, and adds its mass to player
+        gained_mass = self.m[id]
+        self.m[0] = self.m[0] + gained_mass
+        self.r = np.delete(self.r, id, axis = 0)
+        self.v = np.delete(self.v, id, axis = 0)
+        self.m = np.delete(self.m, id, axis = 0)
+        self.radius = np.delete(self.radius, id, axis = 0)
+        self.rho = np.delete(self.rho, id, axis = 0)
+        return gained_mass
+
 def vis_viva(r0):
     # find (initial) velocity of elliptical orbit using vis viva equation
     a = np.linalg.norm(r0, axis = -1, keepdims = True) # semimajor  axis
     rad_vec = r0/a
-    tan_vec = tools.tangent_vector(rad_vec)
+    tan_vec = utils.tangent_vector(rad_vec)
     return np.sqrt(G*1/a)*tan_vec
 
 def gravity_acc(r, m):

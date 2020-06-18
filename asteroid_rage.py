@@ -4,25 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pyglet.window import key # controller
 
-import tools
+import utils
+import game_tools as gt
 from solar_system import SolarSystem
 from screen_transform import ScreenTransform
-
-class CelestialObject(pyglet.sprite.Sprite):
-    def __init__(self, image, r0, **kwargs):
-        '''
-        Class for wrapping pyglet sprites so that we can work with arrays
-        image: sprite appearance, png image,
-        r0: initial position
-        **kwargs: all other keyword arguments compatible with pyglet sprites,
-        for example batch.
-        '''
-        super().__init__(image, r0[0], r0[1], **kwargs)
-
-    def update(self, r, dtheta = 0):
-        self.x = r[0] # update x
-        self.y = r[1] # update y
-        self.rotation += dtheta # optionally increment rotation
 
 SYSTEM_SIZE = 30 # AU
 
@@ -48,33 +33,34 @@ sol = SolarSystem(n_bodies, SYSTEM_SIZE)
 
 # Load icons for solar system objects and player
 background  = pyglet.image.load('./graphics/background.png')
-player_icon = tools.load_sprite_image('./graphics/player.png')
-star_icon = tools.load_sprite_image('./graphics/star.png')
+player_icon = gt.load_sprite_image('./graphics/player.png')
+star_icon = gt.load_sprite_image('./graphics/star.png')
 
 bodies = [] # group all bodies in a list
 # create player object
-player = CelestialObject(player_icon, sol.r[0], batch = main_batch)
-star = CelestialObject(star_icon, sol.r[1], batch = main_batch)
+player = gt.CelestialObject(player_icon, sol.r[0], batch = main_batch)
+star = gt.CelestialObject(star_icon, sol.r[1], batch = main_batch)
 # add star first, then planets
 bodies.append(player)
 bodies.append(star)
 for i in range(n_planets):
-    planet_icon = tools.load_sprite_image(f'./graphics/p{i+1}.png')
-    bodies.append(CelestialObject(planet_icon, sol.r[i+2], batch = main_batch))
+    planet_icon = gt.load_sprite_image(f'./graphics/p{i+1}.png')
+    bodies.append(gt.CelestialObject(planet_icon, sol.r[i+2], batch = main_batch))
 
 for i in range(n_bodies):
-    bodies[i].scale = sol.radius[i]*2*transform.scale
-player.scale = 0.1
+    bodies[i].scale = sol.radius[i]*2*transform.scale/bodies[i].width*1000
+player.scale = 0.5
 
 time_label = pyglet.text.Label('Time: 0', x = width*0.9, y = height*0.95, batch=main_batch)
 fuel_label = pyglet.text.Label('Fuel: %.3E' %(sol.m[0]), x = width*0.904, y = height*0.93, batch=main_batch)
 
-
-dv = 5e-2 # boost level: to be replaced with momentum exchange
+thrust = 1e-2 # units?!
+flow_rate = 1e-3 # units!
 dtheta = 2 # gyroscopic rotation, in degrees
-eating_distance = 0.1 # maximum distance at which planet is consumed
+eating_distance = 1 # maximum distance at which planet is consumed
+dry_mass = 1e-4
 
-time = [0]
+settings = {'time': 0, 'dt' : 1/120 }
 
 @window.event
 def on_draw():
@@ -83,51 +69,71 @@ def on_draw():
     background.blit(0,0) # blit happens
     main_batch.draw()
 
-
-def update(dt):
-    time[0] += dt
-    time_label.text = 'Time: ' + str(time)[1:8]
+def update(refresh_rate):
+    settings['time'] += settings['dt'] # update time
+    time_label.text = 'Time: %.2f' %(settings['time'])
     # this is where we update the window, and the game actually happens
-    sol.update(dt) # update solar system motions
+    sol.update(settings['dt']) # update solar system motions with time step dt
     # then shift from solar system coordinates to screen coordinates
-    shifted = transform(sol.r)
+    screen_coordinates = transform(sol.r)
     # update the sprites (icons) accordingly
     for j, body in enumerate(bodies):
-        body.update(shifted[j])
+        body.update(screen_coordinates[j])
 
+    # Collision detection + fuel conversion
     # Check if any object is close enough to be converted to fuel
-    dist_to_player = np.linalg.norm(sol.r[1:], axis = 1)
+    dist_to_player = np.linalg.norm(sol.r[1:], axis = 1) - sol.radius[1:]  # distance to surface
+    ################################# Add sol.r[0] - ... for different reference frames!
     close_enough = dist_to_player < eating_distance
+    too_close = dist_to_player < 0 # inside surface --> collision
 
     if np.any(close_enough):
         # if any object is close enough to player: convert it to fuel
-        object_id = np.argmin(dist_to_player) + 1
-        bodies[object_id].delete() # remove sprite
-        del(bodies[object_id]) # and list entry
-        sol.convert_to_fuel(object_id) # and remove object from calculations
-        fuel_label.text = 'Fuel: %.3E' %(sol.m[0])
+        if np.any(too_close):
+            sys.exit() # if too close, game over
+
+        if controller[key.SPACE]:
+            object_id = np.argmin(dist_to_player) + 1
+            bodies[object_id].delete() # remove sprite
+            del(bodies[object_id]) # and list entry
+            sol.convert_to_fuel(object_id) # and remove object from calculations
+            fuel_label.text = 'Fuel: %.3E' %(sol.m[0])
+
     # Here comes the actual controls!
-    if controller[key.W]:
+    # Boosting
+    if controller[key.W] and sol.m[0] > dry_mass:
         # perform boost in direction of spacecraft
         orientation = np.radians(player.rotation)
-        boost = tools.unit_vector(orientation)*dv
-        sol.v[0] = sol.v[0] + boost
+        boost = utils.unit_vector(orientation)*thrust/sol.m[0] # acceleration
+        sol.v[0] = sol.v[0] + boost*settings['dt']
+        sol.m[0] = sol.m[0] - flow_rate*settings['dt']
+        fuel_label.text = 'Fuel: %.3E' %(sol.m[0])
+    elif sol.m[0] < dry_mass:
+        fuel_label.text = 'Fuel: Empty'
+
+    # Ship rotation
     if controller[key.D]:
         # rotate clockwise
-        player.rotation = tools.bound_angles(player.rotation + dtheta)
+        player.rotation = utils.bound_angles(player.rotation + dtheta)
     if controller[key.A]:
         # rotate counterclockwise
-        player.rotation = tools.bound_angles(player.rotation - dtheta)
+        player.rotation = utils.bound_angles(player.rotation - dtheta)
 
     # zoom functionality
     if controller[key.DOWN]:
-        transform.zoom /= 1.05
-        tools.scale_bodies(bodies, 0.95)
+        transform.zoom *= 0.975
+        gt.scale_bodies(bodies, 0.975)
     if controller[key.UP]:
-        transform.zoom *= 1.05
-        tools.scale_bodies(bodies, 1.05)
+        transform.zoom *= 1.025
+        gt.scale_bodies(bodies, 1.025)
 
-pyglet.clock.schedule_interval(update, 1/120.0) # update game every 1/60 seconds
+    # Change simulation speed
+    if controller[key.COMMA]:
+        settings['dt'] *= 0.99
+    if controller[key.PERIOD]:
+        settings['dt'] *= 1.01
+
+pyglet.clock.schedule_interval(update, 1/120.0) # update game every 1/120 seconds
 
 if __name__ == '__main__':
     pyglet.app.run()

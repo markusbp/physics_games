@@ -9,4 +9,9 @@ This runs the game at 1920x1080 resolution.
 
 
 # Controls
-w - boost, a - rotate counterclockwise,  d - rotate clockwise, o/p - zoom out/in
+w - boost, space - consume planet/star if in range,
+a - rotate counterclockwise,  
+d - rotate clockwise,
+up/down - zoom out/in,
+, (comma) - lower simulation time step,
+. (period) - increase simulation time step.
