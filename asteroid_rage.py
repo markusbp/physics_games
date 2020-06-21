@@ -6,7 +6,6 @@ from pyglet.window import key # controller
 
 import utils
 import game_tools as gt
-from solar_system import SolarSystem
 from screen_transform import ScreenTransform
 
 SYSTEM_SIZE = 30 # AU
@@ -29,7 +28,7 @@ n_bodies = 2 + n_planets # 1 sun, 1 player
 # transform object to convert from solar system to screen coordinates
 transform = ScreenTransform(width, height, SYSTEM_SIZE, 1)
 # create a solar system which does calculations
-sol = SolarSystem(n_bodies, SYSTEM_SIZE)
+sol = gt.StudentSolarSystem(n_bodies, SYSTEM_SIZE)
 
 # Load icons for solar system objects and player
 background  = pyglet.image.load('./graphics/background.png')
@@ -59,7 +58,7 @@ flow_rate = 1e-3 # units!
 dtheta = 2 # gyroscopic rotation, in degrees
 eating_distance = 1 # maximum distance at which planet is consumed
 dry_mass = 1e-4
-
+dm = 1e-4
 settings = {'time': 0, 'dt' : 1/120 }
 
 @window.event
@@ -94,9 +93,11 @@ def update(refresh_rate):
 
         if controller[key.SPACE]:
             object_id = np.argmin(dist_to_player) + 1
-            bodies[object_id].delete() # remove sprite
-            del(bodies[object_id]) # and list entry
-            sol.convert_to_fuel(object_id) # and remove object from calculations
+            consumed = sol.convert_to_fuel(object_id, dm) # and remove object from calculations
+            if consumed:
+                bodies[object_id].delete() # remove sprite
+                del(bodies[object_id]) # and list entry
+
             fuel_label.text = 'Fuel: %.3E' %(sol.m[0])
 
     # Here comes the actual controls!

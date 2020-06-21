@@ -1,5 +1,6 @@
 import pyglet
 
+from solar_system import SolarSystem
 # module for game-related tools
 
 class CelestialObject(pyglet.sprite.Sprite):
@@ -17,6 +18,28 @@ class CelestialObject(pyglet.sprite.Sprite):
         self.x = r[0] # update x
         self.y = r[1] # update y
         self.rotation += dtheta # optionally increment rotation
+
+class StudentSolarSystem(SolarSystem):
+
+    def convert_to_fuel(self, id, dm):
+        # removes body no. id from arrays r,v and m, and adds its mass to player
+
+        after_mass = self.m[id] - dm
+
+        if after_mass < 0:
+            self.m[0] = self.m[0] + self.m[id]
+            self.r = np.delete(self.r, id, axis = 0)
+            self.v = np.delete(self.v, id, axis = 0)
+            self.m = np.delete(self.m, id, axis = 0)
+            self.radius = np.delete(self.radius, id, axis = 0)
+            self.rho = np.delete(self.rho, id, axis = 0)
+            consumed = True
+        else:
+            self.m[0] = self.m[0] + dm
+            self.m[id] = self.m[id] - dm
+            consumed = False
+        return consumed
+
 
 def scale_bodies(bodies, scale):
     for body in bodies:
