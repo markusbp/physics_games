@@ -93,9 +93,8 @@ for i in range(n_planets):
     planet_icon = tools.load_sprite_image(f'./graphics/p{i+1}.png')
     bodies.append(CelestialObject(planet_icon, sol.r[i+2], batch = all_bodies))
 
-for i in range(n_bodies):
+for i in range(n_bodies): #####################################################
     bodies[i].scale *= 0.1
-
 player.scale = 1
 
 @window.event
@@ -108,8 +107,10 @@ def on_draw():
 dv = 5e-2 # boost level: to be replaced with momentum exchange
 dtheta = 1 # gyroscopic rotation, in degrees
 eating_distance = 1 # maximum distance at which planet is consumed
+time = 0
 
 def update(dt):
+    time += dt
     # this is where we update the window, and the game actually happens
     sol.update(dt) # update solar system motions
     # then shift from solar system coordinates to screen coordinates

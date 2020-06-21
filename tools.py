@@ -22,6 +22,7 @@ def unit_vector(angle):
     return np.array([np.sin(angle), np.cos(angle)])
 
 def tangent_vector(r):
+    # return vector perpendicular to r (counterclockwise) --> [x, y] -> [-y, x]
     return np.flip(r, axis = -1)*np.array([-1, 1])
 
 def transform(coord, scale, center):
