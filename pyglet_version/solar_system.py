@@ -14,7 +14,7 @@ class SolarSystem:
         self.v = v # velocities
         self.m = m # masses
         self.rho = rho # densities
-        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3) # radii
+        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3)*200 # radii
 
     def update(self, dt):
         # Euler-Chromer for starters
@@ -32,11 +32,11 @@ class SolarSystem:
         rho[1] = 2.3e6  # mean solar density, solar masses/au^3
 
         # Assign player to index 0, sun to index 1, and other bodies after
-        r0[1] = 0 # initialize sun at centre
         r0[0] = np.array([self.scale, 0])
         m0[1] = 1 # mass in solar masses
-        m0[0] = 1e-6
+        m0[0] = 1e-4
         v0 = vis_viva(r0) # elliptical orbits, semimajor axis given by r0
+        r0[1] = 0 # initialize sun at centre
         v0[1] = 0 # sun at rest in centre of system
         return r0, v0, m0, rho
 

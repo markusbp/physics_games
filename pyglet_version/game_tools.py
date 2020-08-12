@@ -20,6 +20,17 @@ class CelestialObject(pyglet.sprite.Sprite):
         self.y = r[1] # update y
         self.rotation += dtheta # optionally increment rotation
 
+    def zoom(self, zoom_factor):
+        self.scale *= zoom_factor
+
+class ProgressBar():
+    def __init__(self, r0, screen_size, batch):
+        # work in progress
+        self.r0 = r0
+        self.screen_size = screen_size
+        self.outline = pyglet.sprite.Sprite(border, x = r0[0], y = r0[1], batch = batch)
+        self.bar = pyglet.sprite.Sprite(bar, x = r0[0], y = r0[1], batch = batch)
+
 class StudentSolarSystem(SolarSystem):
     def convert_to_fuel(self, id, dm):
         # removes body no. id from arrays r,v and m, and adds its mass to player
@@ -37,10 +48,6 @@ class StudentSolarSystem(SolarSystem):
             self.m[id] = self.m[id] - dm
             consumed = False
         return consumed
-
-def scale_bodies(bodies, scale):
-    for body in bodies:
-        body.scale *= scale
 
 def load_sprite_image(filename):
     # load sprite image, and anchor to its center!

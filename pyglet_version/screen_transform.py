@@ -30,4 +30,4 @@ class ScreenTransform:
     def zoom(self, zoom):
         # setter allows us to change scale factor correctly when zoom changes
         self._zoom = zoom
-        self.scale = self.height/(2*self.system_size)*self._zoom
+        self.scale = np.amin(self.center)/(2*self.system_size)*self._zoom
