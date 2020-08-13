@@ -2,7 +2,7 @@ import sys
 import time
 import pyglet
 import numpy as np
-import matplotlib.pyplot as plt
+
 from pyglet.window import key # controller
 
 import utils
@@ -62,7 +62,7 @@ dtheta = 2 # gyroscopic rotation, in degrees
 eating_distance = 1 # maximum distance at which planet is consumed
 dry_mass = 1e-5
 dm = 1e-3
-settings = {'time': 0, 'dt' : 1/50, 'was_close' : False}
+settings = {'time': 0, 'dt' : 1/100, 'was_close' : False}
 
 time_label = pyglet.text.Label('Time: 0', x = width*0.9, y = height*0.95, batch = main_batch, group = foreground)
 sim_label = pyglet.text.Label('Sim. Speed: %.3f' %(0), x = width*0.894, y = height*0.91, batch = main_batch, group = foreground)
@@ -99,6 +99,8 @@ def update(refresh_rate):
         sol.v[0] = sol.v[0] + boost*settings['dt']
         sol.m[0] = sol.m[0] - flow_rate*settings['dt']
         mass_label.text = f'Fuel: %.3E' %(sol.m[0] - dry_mass)
+    elif sol.m[0] < dry_mass:
+        mass_label.text = f'Fuel: Empty'
     # Ship rotation
     if controller[key.D]:
         # rotate clockwise

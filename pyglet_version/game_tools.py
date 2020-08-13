@@ -23,14 +23,6 @@ class CelestialObject(pyglet.sprite.Sprite):
     def zoom(self, zoom_factor):
         self.scale *= zoom_factor
 
-class ProgressBar():
-    def __init__(self, r0, screen_size, batch):
-        # work in progress
-        self.r0 = r0
-        self.screen_size = screen_size
-        self.outline = pyglet.sprite.Sprite(border, x = r0[0], y = r0[1], batch = batch)
-        self.bar = pyglet.sprite.Sprite(bar, x = r0[0], y = r0[1], batch = batch)
-
 class StudentSolarSystem(SolarSystem):
     def convert_to_fuel(self, id, dm):
         # removes body no. id from arrays r,v and m, and adds its mass to player
