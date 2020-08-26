@@ -14,7 +14,7 @@ class SolarSystem:
         self.v = v # velocities
         self.m = m # masses
         self.rho = rho # densities
-        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3)*200 # radii
+        self.radius = (self.m/(self.rho*4/3*np.pi))**(1/3)*500 # radii
 
     def update(self, dt):
         # Euler-Chromer for starters

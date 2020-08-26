@@ -23,6 +23,19 @@ class CelestialObject(pyglet.sprite.Sprite):
     def zoom(self, zoom_factor):
         self.scale *= zoom_factor
 
+class BackgroundSprite(pyglet.sprite.Sprite):
+    def __init__(self, image, r0, **kwargs):
+        super().__init__(image, r0[0], r0[1], **kwargs)
+
+    def update(self, v, dtheta = 0):
+        self.x = self.x + v[0]
+        self.y = self.y + v[1]
+
+    def zoom(self, zoom_factor):
+        self.scale *= zoom_factor
+
+
+
 class StudentSolarSystem(SolarSystem):
     def convert_to_fuel(self, id, dm):
         # removes body no. id from arrays r,v and m, and adds its mass to player
@@ -38,6 +51,8 @@ class StudentSolarSystem(SolarSystem):
         else:
             self.m[0] = self.m[0] + dm
             self.m[id] = self.m[id] - dm
+            self.radius[id] = (self.m[id]/(self.rho[id]*4/3*np.pi))**(1/3)*200 # radii
+            self.radius[0] = (self.m[0]/(self.rho[0]*4/3*np.pi))**(1/3)*200 # radii
             consumed = False
         return consumed
 

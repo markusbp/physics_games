@@ -15,7 +15,7 @@ class ScreenTransform:
         self._zoom = zoom # optional zoom level
         # center of screen
         self.center = np.array([int(width/2), int(height/2)])
-        self.scale = self.height/(2*self.system_size)*self._zoom
+        self.scale = np.amin(self.center)/(self.system_size)*self._zoom
 
     def __call__(self, coord):
         # shift coord from [-system size, system size] to [height, width]*zoom
@@ -30,4 +30,4 @@ class ScreenTransform:
     def zoom(self, zoom):
         # setter allows us to change scale factor correctly when zoom changes
         self._zoom = zoom
-        self.scale = np.amin(self.center)/(2*self.system_size)*self._zoom
+        self.scale = np.amin(self.center)/(self.system_size)*self._zoom
