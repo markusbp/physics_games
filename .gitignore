@@ -3,5 +3,6 @@
 
 # virtualenv
 game_env/
-
+env2/
+dev_tools/
 
