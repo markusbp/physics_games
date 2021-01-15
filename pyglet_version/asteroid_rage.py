@@ -33,6 +33,11 @@ player_icon = gt.load_sprite_image('./graphics/player.png')
 player_eat_icon = gt.load_sprite_image('./graphics/player_consume.png')
 star_icon = gt.load_sprite_image('./graphics/star.png')
 
+explosions = pyglet.image.load('./graphics/explosion.png')
+image_grid = pyglet.image.ImageGrid(explosions, 4, 3)
+texture_grid = image_grid.get_texture_sequence()
+explosion_animation = pyglet.image.Animation.from_image_sequence(texture_grid, 0.1, loop = True)
+
 main_batch = pyglet.graphics.Batch() # draw everything at once in a Batch
 background = pyglet.graphics.OrderedGroup(0) # background first
 foreground = pyglet.graphics.OrderedGroup(1) # then foreground
@@ -52,8 +57,6 @@ for i in range(n_planets):
 
 for i in range(n_bodies):
     bodies[i].scale = sol.radius[i]*2*transform.scale/bodies[i].width
-
-player.scale *= 2
 
 t_zero = time.time()
 
@@ -146,7 +149,8 @@ def update(refresh_rate):
     elif close_enough and VARS['was_close'] == True:
         too_close = dist_to_player < 0 # inside surface --> collision
         if np.any(too_close):
-            sys.exit() # if too close, game over
+            player.image = explosion_animation
+            #sys.exit() # if too close, game over
 
         if controller[key.SPACE]:
             object_id = np.argmin(dist_to_player) + 1
@@ -157,7 +161,7 @@ def update(refresh_rate):
                 del(bodies[object_id]) # and list entry
                 objects_consumed = n_bodies - len(bodies)
                 progress_label.text = f'Objects Consumed: {objects_consumed}/{n_bodies - 1}'
-                
+
     elif close_enough:
         VARS['was_close'] = True
         player.image = player_eat_icon
